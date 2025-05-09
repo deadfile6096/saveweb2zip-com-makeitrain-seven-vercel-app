@@ -1,0 +1,357 @@
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <title>$RAIN</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/gunpsd.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #bdeff5;
+            font-family: Arial, sans-serif;
+        }
+
+        .container-limit {
+            max-width: 1200px;
+            margin: auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .moneyGunContainer {
+            pointer-events: none;
+        }
+
+        #moneyGun {
+            width: 350px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            user-select: none;
+            pointer-events: auto;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        #moneyGun.pressed {
+            transform: scale(0.95);
+        }
+
+        #bottomImage {
+            position: fixed;
+            bottom: 80px; /* leave space for footer links */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Contenedor para billetes */
+        .billContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bill {
+            position: absolute;
+            width: 60px;
+            height: auto;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        .cloudContainer {
+            position: absolute;
+            top: -50px;
+            pointer-events: none;
+        }
+
+        .cloud {
+            width: 300px;
+            cursor: pointer;
+            user-select: none;
+            pointer-events: auto;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        #cloud1Container { left: 5%; z-index: 1; }
+        #cloud2Container { left: 25%; z-index: 2; }
+        #cloud3Container { left: 50%; z-index: 3; }
+        #cloud4Container { left: 75%; z-index: 4; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .shaking {
+            animation: shake 0.5s;
+        }
+
+        /* Footer principal button */
+        .footerButton {
+            position: fixed;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', sans-serif;
+            font-size: 14px;
+            padding: 10px 20px;
+            background-color: #3300ff;
+            color: #000000;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+        .footerButton:hover {
+            background-color: #d3d3d3;
+        }
+
+        /* Footer links container */
+        .footerLinks {
+            position: fixed;
+            bottom: 5px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2rem;
+            box-sizing: border-box;
+        }
+        .footerLinks .linkButton {
+            font-family: 'Press Start 2P', sans-serif;
+            font-size: 14px;
+            padding: 10px 20px;
+            background-color: #3300ff;
+            color: #000000;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            -webkit-user-select: text; /* Safari/Chrome */
+            -moz-user-select: text;    /* Firefox */
+            -ms-user-select: text;     /* IE10+ */
+            user-select: text;         /* Standard */
+        }
+        .footerLinks .linkButton:hover {
+            background-color: #d3d3d3;
+        }
+
+        .carContainer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        #car {
+            position: absolute;
+            bottom: 30px;
+            right: -300px;
+            width: 300px;
+            height: auto;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        @keyframes moveCar {
+            0% { right: -200px; }
+            100% { right: 100vw; }
+        }
+
+        .animateCar {
+            animation: moveCar 5s linear forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-limit">
+        <div id="container">
+            <div class="moneyGunContainer">
+                <img id="moneyGun" src="images/gunpsd.png" alt="Supreme Money Gun">
+            </div>
+        </div>
+
+        <img id="bottomImage" src="images/MAKEIT.png" alt="Imagen Inferior">
+
+        <!-- Carro animado -->
+        <div class="carContainer">
+            <img id="car" src="images/lambito.png" alt="Carro">
+        </div>
+
+        <!-- Contenedor para billetes -->
+        <div class="billContainer" id="billContainer"></div>
+
+        <!-- Nubes interactivas -->
+        <div id="cloud1Container" class="cloudContainer">
+            <img id="cloud1" class="cloud" src="images/cloud1.png" alt="Nube 1">
+        </div>
+        <div id="cloud2Container" class="cloudContainer">
+            <img id="cloud2" class="cloud" src="images/cloud2.png" alt="Nube 2">
+        </div>
+        <div id="cloud3Container" class="cloudContainer">
+            <img id="cloud3" class="cloud" src="images/cloud1.png" alt="Nube 3">
+        </div>
+        <div id="cloud4Container" class="cloudContainer">
+            <img id="cloud4" class="cloud" src="images/cloud2.png" alt="Nube 4">
+        </div>
+    </div>
+
+    <!-- Botón principal en footer -->
+    <button class="footerButton" onclick="window.location.href='https://money-ecru-psi.vercel.app/';">
+        Make it rain on your pfp!
+    </button>
+
+    <!-- Enlaces adicionales bajo el botón -->
+    <div class="footerLinks">
+        <button class="linkButton" onclick="window.location.href='https://x.com/i/communities/1920291349355528563/';">
+            JOIN OR X COMMUNITY!
+        </button>
+        <button class="linkButton" onclick="window.location.href='https://pump.fun/coin/2FQZzaW1aso4vWDSBaT7yRAgGRprBbWnPCvUGP2apump';">
+            2FQZzaW1aso4vWDSBaT7yRAgGRprBbWnPCvUGP2apump
+        </button>
+    </div>
+
+    <audio id="song" src="media/song.mp3" preload="auto"></audio>
+    <audio id="cloudSound1" src="media/c1.mp3" preload="auto"></audio>
+    <audio id="cloudSound2" src="media/c2.mp3" preload="auto"></audio>
+    <audio id="cloudSound3" src="media/c3.mp3" preload="auto"></audio>
+    <audio id="cloudSound4" src="media/c4.mp3" preload="auto"></audio>
+
+    <script>
+        const moneyGun = document.getElementById('moneyGun');
+        const song = document.getElementById('song');
+        const billContainer = document.getElementById('billContainer');
+        let isShooting = false, shootInterval;
+        const billStartOffsetX = 300, billStartOffsetY = 70;
+
+        moneyGun.addEventListener('mousedown', startShooting);
+        moneyGun.addEventListener('mouseup', stopShooting);
+        moneyGun.addEventListener('mouseleave', stopShooting);
+        moneyGun.addEventListener('touchstart', startShooting);
+        moneyGun.addEventListener('touchend', stopShooting);
+
+        function startShooting() {
+            if (!isShooting) {
+                isShooting = true;
+                moneyGun.classList.add('pressed');
+                song.currentTime = 0; song.play();
+                shootInterval = setInterval(shootBill, 150);
+            }
+        }
+        function stopShooting() {
+            isShooting = false;
+            moneyGun.classList.remove('pressed');
+            song.pause();
+            clearInterval(shootInterval);
+        }
+
+        const car = document.getElementById('car');
+        setInterval(() => {
+            car.classList.remove('animateCar');
+            void car.offsetWidth;
+            car.classList.add('animateCar');
+        }, 5000);
+
+        function shootBill() {
+            const bill = document.createElement('img'),
+                  billNumber = Math.floor(Math.random() * 10) + 1,
+                  angle = Math.random() * (Math.PI/3) - (Math.PI/6),
+                  speed = Math.random() * 3 + 2;
+            bill.src = `bill_${billNumber}.png`;
+            bill.className = 'bill';
+
+            const gunRect = moneyGun.getBoundingClientRect(),
+                  initialX = gunRect.left + billStartOffsetX,
+                  initialY = gunRect.top + billStartOffsetY;
+            bill.style.left = `${initialX}px`;
+            bill.style.top = `${initialY}px`;
+            billContainer.appendChild(bill);
+
+            let x = initialX, y = initialY;
+            (function animate(){
+                x += speed * Math.cos(angle);
+                y -= speed * Math.sin(angle);
+                bill.style.left = `${x}px`;
+                bill.style.top = `${y}px`;
+                if (y < -100 || x < -100 || x > window.innerWidth+100) {
+                    bill.remove();
+                } else requestAnimationFrame(animate);
+            })();
+        }
+
+        const cloudOffsets = {
+            cloud1: {x:140,y:105}, cloud2:{x:120,y:100},
+            cloud3:{x:140,y:105}, cloud4:{x:130,y:100}
+        };
+        ['cloud1','cloud2','cloud3','cloud4'].forEach(id=>{
+            document.getElementById(id).addEventListener('click', e=>{
+                const cloud = e.target, offset = cloudOffsets[id],
+                      sound = document.getElementById('cloudSound'+id.slice(-1));
+                cloud.classList.add('shaking');
+                sound.currentTime = 0; sound.play();
+                const rect = cloud.getBoundingClientRect();
+                for (let i=0; i<5; i++) createBill(rect.left+offset.x, rect.top+offset.y);
+                setTimeout(()=>cloud.classList.remove('shaking'), 500);
+            });
+        });
+
+        function createBill(x0,y0) {
+            const bill = document.createElement('img'),
+                  n = Math.floor(Math.random()*10)+1,
+                  speed = Math.random()*3+2,
+                  angle = Math.PI/2;
+            bill.src = `bill_${n}.png`;
+            bill.className = 'bill';
+            bill.style.left = `${x0}px`;
+            bill.style.top = `${y0}px`;
+            billContainer.appendChild(bill);
+
+            let x=x0,y=y0;
+            (function animate(){
+                x += speed*Math.cos(angle);
+                y += speed*Math.sin(angle);
+                bill.style.left = `${x}px`;
+                bill.style.top = `${y}px`;
+                if (y>window.innerHeight || x<-100 || x>window.innerWidth+100) {
+                    bill.remove();
+                } else requestAnimationFrame(animate);
+            })();
+        }
+    </script>
+
+
+</body></html>
